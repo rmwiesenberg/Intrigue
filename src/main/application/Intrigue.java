@@ -18,6 +18,8 @@ public class Intrigue extends Solitaire{
 	
 	protected ArrayList<Pile> sFoundation = new ArrayList<Pile>(8);
 	
+	protected Pile tempPile;
+	
 	protected ArrayList<ColumnView> tv = new ArrayList<ColumnView>(8);
 	
 	protected ArrayList<PileView> ffv = new ArrayList<PileView>(8);
@@ -49,6 +51,8 @@ public class Intrigue extends Solitaire{
 		deck = new MultiDeck("deck", 2);
 		deck.create(seed);
 		addModelElement(deck);
+		
+		tempPile = new Pile("tempPile");
 		
 		for(int i = 0; i < 8; i++){
 			int numName = i + 1;
@@ -131,7 +135,22 @@ public class Intrigue extends Solitaire{
 	}
 	
 	private void distributeCards(){
+		int curTableau = 0;
+		boolean firstQueen = false;
+		while(firstQueen == false){
+			if (deck.peek().getRank() == 12){
+				tableau.get(curTableau).add(deck.get());
+				deck.push(tempPile);
+				firstQueen = true;
+			} else {
+				tempPile.add(deck.get());
+			}
+		}
 		
+		while(!deck.empty()){
+			if (deck.peek().getRank() == 12) curTableau++;
+			tableau.get(curTableau).add(deck.get());
+		}
 	}
 	
 	public static void main(String []args){
