@@ -6,6 +6,8 @@ import ks.common.games.Solitaire;
 import ks.common.model.*;
 import ks.common.view.*;
 import ks.launcher.Main;
+import main.model.*;
+import main.controller.*;
 import java.util.ArrayList;
 
 
@@ -29,11 +31,11 @@ public class Intrigue extends Solitaire{
 	protected IntegerView scoreView;
 	
 	private void initializeController(){
-		// Init Column and Pile Views
+		// Init Column and Pile Controllers
 		for(int i = 0; i < 8; i++){
-			tv.get(i).setMouseAdapter(new IntrigueColumnView (this, tv.get(i)));
-			ffv.get(i).setMouseAdapter(new IntriguePileView (this, ffv.get(i)));
-			sfv.get(i).setMouseAdapter(new IntriguePileView (this, sfv.get(i)));
+			tv.get(i).setMouseAdapter(new IntrigueColumnController (this, tv.get(i)));
+			ffv.get(i).setMouseAdapter(new IntriguePileController (this, ffv.get(i)));
+			sfv.get(i).setMouseAdapter(new IntriguePileController (this, sfv.get(i)));
 		}
 		
 		// Init scoreView
@@ -70,13 +72,13 @@ public class Intrigue extends Solitaire{
 		CardImages ci = getCardImages();
 		
 		scoreView = new IntegerView(getScore());
-		scoreView.setBounds(100+5*ci.getWidth(), 10, 100, 60);
+		scoreView.setBounds(100+5*ci.getWidth(), 0, 100, 65);
 		addViewWidget(scoreView);
 		
 		int i = 0;
 		int n = 0;
 		
-		while(i < 4){
+		while(i < 8){
 			ffv.add(i, new PileView(fFoundation.get(i)));
 			ffv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
 			addViewWidget(ffv.get(i));			
@@ -84,7 +86,7 @@ public class Intrigue extends Solitaire{
 		
 			tv.add(i, new ColumnView(tableau.get(i)));
 			tv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
-			addViewWidget(tv.get(1));			
+			addViewWidget(tv.get(i));			
 			n++;
 		
 			sfv.add(i, new PileView(sFoundation.get(i)));
@@ -94,6 +96,7 @@ public class Intrigue extends Solitaire{
 			
 			i++;
 		}
+		/*
 		n = 0;
 		while(i < 8){
 			ffv.add(i, new PileView(fFoundation.get(i)));
@@ -113,6 +116,7 @@ public class Intrigue extends Solitaire{
 			
 			i++;
 		}
+		*/
 	}
 	
 	public boolean hasWon(){
@@ -131,13 +135,14 @@ public class Intrigue extends Solitaire{
 		initializeView();
 		initializeController();
 		
+		
 		distributeCards();
 	}
 	
 	private void distributeCards(){
 		int curTableau = 0;
 		boolean firstQueen = false;
-		while(firstQueen == false){
+		while(!firstQueen){
 			if (deck.peek().getRank() == 12){
 				tableau.get(curTableau).add(deck.get());
 				deck.push(tempPile);
@@ -148,8 +153,16 @@ public class Intrigue extends Solitaire{
 		}
 		
 		while(!deck.empty()){
+			boolean sorted = false;
 			if (deck.peek().getRank() == 12) curTableau++;
 			tableau.get(curTableau).add(deck.get());
+			
+			for(int i = 0; i < 8; i++){
+				Move tffm = new Tableau5FoundationMove(tableau.get(curTableau), tableau.get(curTableau).get(), fFoundation.get(i));
+				Move tsfm = new Tableau6FoundationMove(tableau.get(curTableau), tableau.get(curTableau).get(), sFoundation.get(i));
+				if(!sorted) sorted = tffm.doMove(this);
+				if(!sorted) sorted = tsfm.doMove(this);
+			}
 		}
 	}
 	
