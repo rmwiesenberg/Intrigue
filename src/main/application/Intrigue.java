@@ -194,6 +194,7 @@ public class Intrigue extends Solitaire{
 	public Dimension getPreferredSize() {
 	  return new Dimension (780, 1040);
 	}
+
 	
 	public static void main(String []args){
 		GameWindow gw = Main.generateWindow(new Intrigue(), Deck.OrderByRank);
