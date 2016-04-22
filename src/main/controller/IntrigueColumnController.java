@@ -20,7 +20,7 @@ public class IntrigueColumnController extends java.awt.event.MouseAdapter {
 	public IntrigueColumnController(Solitaire game, ColumnView columnview){
 		super();
 		
-		theGame = game;
+		this.theGame = game;
 		this.columnview = columnview;
 	}
 	

@@ -1,47 +1,65 @@
 package main.application;
 
-import ks.client.gamefactory.GameWindow;
+import ks.client.gamefactory.*;
+import ks.common.controller.SolitaireMouseMotionAdapter;
 import ks.common.controller.SolitaireReleasedAdapter;
 import ks.common.games.Solitaire;
+import ks.common.games.SolitaireUndoAdapter;
 import ks.common.model.*;
 import ks.common.view.*;
 import ks.launcher.Main;
 import main.model.*;
 import main.controller.*;
-import java.util.ArrayList;
+
+import java.awt.Dimension;
 
 
 public class Intrigue extends Solitaire{
 	protected MultiDeck deck;
 	
-	protected ArrayList<Column> tableau = new ArrayList<Column>(8);
+	public Column tableau[] = new Column[8];
 	
-	protected ArrayList<Pile> fFoundation = new ArrayList<Pile>(8);
+	public Pile fFoundation[] = new Pile[8];
 	
-	protected ArrayList<Pile> sFoundation = new ArrayList<Pile>(8);
+	public Pile sFoundation[] = new Pile[8];
 	
 	protected Pile tempPile;
 	
-	protected ArrayList<ColumnView> tv = new ArrayList<ColumnView>(8);
+	protected ColumnView tv[] = new ColumnView[8];
 	
-	protected ArrayList<PileView> ffv = new ArrayList<PileView>(8);
+	protected PileView ffv[] = new PileView[8];
 	
-	protected ArrayList<PileView> sfv = new ArrayList<PileView>(8);
+	protected PileView sfv[] = new PileView[8];
 	
 	protected IntegerView scoreView;
 	
 	private void initializeController(){
 		// Init Column and Pile Controllers
 		for(int i = 0; i < 8; i++){
-			tv.get(i).setMouseAdapter(new IntrigueColumnController (this, tv.get(i)));
-			ffv.get(i).setMouseAdapter(new IntriguePileController (this, ffv.get(i)));
-			sfv.get(i).setMouseAdapter(new IntriguePileController (this, sfv.get(i)));
+			tv[i].setMouseAdapter(new IntrigueColumnController (this, tv[i]));
+			tv[i].setMouseMotionAdapter (new SolitaireMouseMotionAdapter (this));
+			tv[i].setUndoAdapter (new SolitaireUndoAdapter(this));
+			
+			ffv[i].setMouseAdapter(new IntriguePileController (this, ffv[i]));
+			ffv[i].setMouseMotionAdapter (new SolitaireMouseMotionAdapter (this));
+			ffv[i].setUndoAdapter (new SolitaireUndoAdapter(this));
+			
+			sfv[i].setMouseAdapter(new IntriguePileController (this, sfv[i]));
+			sfv[i].setMouseMotionAdapter (new SolitaireMouseMotionAdapter (this));
+			sfv[i].setUndoAdapter (new SolitaireUndoAdapter(this));
 		}
 		
 		// Init scoreView
-		scoreView.setMouseAdapter(new SolitaireReleasedAdapter(this));
+		scoreView.setMouseMotionAdapter (new SolitaireMouseMotionAdapter(this));
+		scoreView.setMouseAdapter (new SolitaireReleasedAdapter(this));
+		scoreView.setUndoAdapter (new SolitaireUndoAdapter(this));
+
+		getContainer().setMouseMotionAdapter(new SolitaireMouseMotionAdapter(this));
+		getContainer().setMouseAdapter (new SolitaireReleasedAdapter(this));
+		getContainer().setUndoAdapter (new SolitaireUndoAdapter(this));
 	}
 	
+	@Override
 	public String getName() {
 		return "Intrigue Final";
 	}
@@ -55,16 +73,17 @@ public class Intrigue extends Solitaire{
 		addModelElement(deck);
 		
 		tempPile = new Pile("tempPile");
+		addModelElement(tempPile);
 		
 		for(int i = 0; i < 8; i++){
 			int numName = i + 1;
-			tableau.add(i, new Column("tableau" + numName));
-			fFoundation.add(i, new Pile("fFoundation" + numName));
-			sFoundation.add(i, new Pile("sFoundation" + numName));
+			tableau[i] = new Column("tableau" + numName);
+			fFoundation[i] = new Pile("fFoundation" + numName);
+			sFoundation[i] = new Pile("sFoundation" + numName);
 			
-			addModelElement(tableau.get(i));
-			addModelElement(fFoundation.get(i));
-			addModelElement(sFoundation.get(i));
+			addModelElement(tableau[i]);
+			addModelElement(fFoundation[i]);
+			addModelElement(sFoundation[i]);
 		}
 	}
 	
@@ -73,97 +92,107 @@ public class Intrigue extends Solitaire{
 		
 		scoreView = new IntegerView(getScore());
 		scoreView.setBounds(100+5*ci.getWidth(), 0, 100, 65);
-		addViewWidget(scoreView);
+		container.addWidget(scoreView);
 		
-		int i = 0;
 		int n = 0;
 		
-		while(i < 8){
-			ffv.add(i, new PileView(fFoundation.get(i)));
-			ffv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
-			addViewWidget(ffv.get(i));			
+		for(int i = 0; i < 8; i++){
+			ffv[i] = new PileView(fFoundation[i]);
+			ffv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
+			container.addWidget(ffv[i]);			
 			n++;
 		
-			tv.add(i, new ColumnView(tableau.get(i)));
-			tv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
-			addViewWidget(tv.get(i));			
+			tv[i] = new ColumnView(tableau[i]);
+			tv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), 1000);
+			container.addWidget(tv[i]);			
 			n++;
 		
-			sfv.add(i, new PileView(sFoundation.get(i)));
-			sfv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
-			addViewWidget(sfv.get(i));
+			sfv[i] = new PileView(sFoundation[i]);
+			sfv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
+			container.addWidget(sfv[i]);
 			n++;
-			
-			i++;
 		}
-		/*
-		n = 0;
-		while(i < 8){
-			ffv.add(i, new PileView(fFoundation.get(i)));
-			ffv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 400, ci.getWidth(), ci.getHeight());
-			addViewWidget(ffv.get(i));			
-			n++;
-		
-			tv.add(i, new ColumnView(tableau.get(i)));
-			tv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 400, ci.getWidth(), ci.getHeight());
-			addViewWidget(tv.get(1));			
-			n++;
-		
-			sfv.add(i, new PileView(sFoundation.get(i)));
-			sfv.get(i).setBounds((((n+1) * 20) + (n * ci.getWidth())), 400, ci.getWidth(), ci.getHeight());
-			addViewWidget(sfv.get(i));
-			n++;
-			
-			i++;
-		}
-		*/
 	}
 	
 	public boolean hasWon(){
-		return 	(tableau.get(0).peek().getRank() == 12) &&
-				(tableau.get(1).peek().getRank() == 12) &&
-				(tableau.get(2).peek().getRank() == 12) &&
-				(tableau.get(3).peek().getRank() == 12) &&
-				(tableau.get(4).peek().getRank() == 12) &&
-				(tableau.get(5).peek().getRank() == 12) &&
-				(tableau.get(6).peek().getRank() == 12) &&
-				(tableau.get(7).peek().getRank() == 12);
+		return 	(tableau[0].peek().getRank() == 12) &&
+				(tableau[1].peek().getRank() == 12) &&
+				(tableau[2].peek().getRank() == 12) &&
+				(tableau[3].peek().getRank() == 12) &&
+				(tableau[4].peek().getRank() == 12) &&
+				(tableau[5].peek().getRank() == 12) &&
+				(tableau[6].peek().getRank() == 12) &&
+				(tableau[7].peek().getRank() == 12);
 	}
 	
 	public void initialize(){
 		initializeModel(getSeed());
 		initializeView();
 		initializeController();
-		
-		
 		distributeCards();
 	}
 	
 	private void distributeCards(){
 		int curTableau = 0;
 		boolean firstQueen = false;
-		while(!firstQueen){
-			if (deck.peek().getRank() == 12){
-				tableau.get(curTableau).add(deck.get());
+		while (!firstQueen) {
+			if (deck.peek().getRank() == 12) {
+				tableau[curTableau].add(deck.get());
 				deck.push(tempPile);
 				firstQueen = true;
 			} else {
 				tempPile.add(deck.get());
 			}
 		}
-		
-		while(!deck.empty()){
-			boolean sorted = false;
-			if (deck.peek().getRank() == 12) curTableau++;
-			tableau.get(curTableau).add(deck.get());
-			
-			for(int i = 0; i < 8; i++){
-				Move tffm = new Tableau5FoundationMove(tableau.get(curTableau), tableau.get(curTableau).get(), fFoundation.get(i));
-				Move tsfm = new Tableau6FoundationMove(tableau.get(curTableau), tableau.get(curTableau).get(), sFoundation.get(i));
-				if(!sorted) sorted = tffm.doMove(this);
-				if(!sorted) sorted = tsfm.doMove(this);
+
+		while (!deck.empty()) {
+			Card curCard = deck.get();
+			int rank = curCard.getRank();
+			if (rank == 12)
+				curTableau++;
+
+			tableau[curTableau].add(curCard);
+			curCard = tableau[curTableau].peek();
+			rank = curCard.getRank();
+
+			if (rank == 6 || rank == 7 || rank == 8 || rank == 9 || rank == 10 || rank == 11) {
+				for (int i = 0; i < 8; i++) {
+					if (sFoundation[i].empty() && (rank == 6)) {
+						sFoundation[i].add(tableau[curTableau].get());
+						this.updateScore(1);
+						break;
+					} else if (!sFoundation[i].empty()) {
+						int frank = sFoundation[i].get().getRank() + 1;
+						if (frank == rank) {
+							sFoundation[i].add(tableau[curTableau].get());
+							this.updateScore(1);
+							break;
+						}
+					}
+				}
+			} else if (rank == 5 || rank == 4 || rank == 3 || rank == 2 || rank == 1 || rank == 13) {
+				for (int i = 0; i < 8; i++) {
+					if (fFoundation[i].empty() && rank == 5) {
+						fFoundation[i].add(tableau[curTableau].get());
+						this.updateScore(1);
+						break;
+					} else if (!fFoundation[i].empty()) {
+						int frank = fFoundation[i].get().getRank() - 1;
+						if (frank == rank || (frank == 0 && rank == 13)) {
+							fFoundation[i].add(tableau[curTableau].get());
+							this.updateScore(1);
+							break;
+						}
+					}
+
+				}
 			}
 		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+	  return new Dimension (2000, 1080);
 	}
 	
 	public static void main(String []args){

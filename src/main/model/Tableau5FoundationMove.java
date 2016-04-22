@@ -16,6 +16,7 @@ public class Tableau5FoundationMove extends Move {
 		this.card = card;
 	}
 	
+	@Override
 	public boolean doMove(Solitaire theGame){
 		if(valid(theGame)){
 			foundation.add(card); 
@@ -24,6 +25,7 @@ public class Tableau5FoundationMove extends Move {
 		} else return false;
 	}
 	
+	@Override
 	public boolean valid(Solitaire theGame){
 		if(foundation.empty() && card.getRank() == 5) return true;
 		else if((card.getRank() < 5 && card.getRank() > 0)
@@ -36,6 +38,7 @@ public class Tableau5FoundationMove extends Move {
 		} else return false;
 	}
 	
+	@Override
 	public boolean undo(Solitaire theGame){
 		if(foundation.empty() || tableau.empty()) return false;
 		
