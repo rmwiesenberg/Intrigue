@@ -22,9 +22,7 @@ public class Tableau6FoundationMove extends Move {
 			foundation.add(card); 
 			theGame.updateScore(1);
 			return true;
-		} else {
-			return false;
-		}
+		} else return false;
 	}
 	
 	@Override

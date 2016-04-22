@@ -53,7 +53,7 @@ public class Intrigue extends Solitaire{
 		scoreView.setMouseMotionAdapter (new SolitaireMouseMotionAdapter(this));
 		scoreView.setMouseAdapter (new SolitaireReleasedAdapter(this));
 		scoreView.setUndoAdapter (new SolitaireUndoAdapter(this));
-
+		
 		getContainer().setMouseMotionAdapter(new SolitaireMouseMotionAdapter(this));
 		getContainer().setMouseAdapter (new SolitaireReleasedAdapter(this));
 		getContainer().setUndoAdapter (new SolitaireUndoAdapter(this));
@@ -91,24 +91,24 @@ public class Intrigue extends Solitaire{
 		CardImages ci = getCardImages();
 		
 		scoreView = new IntegerView(getScore());
-		scoreView.setBounds(100+5*ci.getWidth(), 0, 100, 65);
+		scoreView.setBounds(50 + 4*ci.getWidth(), -20, 100, 65);
 		container.addWidget(scoreView);
 		
 		int n = 0;
 		
 		for(int i = 0; i < 8; i++){
 			ffv[i] = new PileView(fFoundation[i]);
-			ffv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
+			ffv[i].setBounds((20 * (i+1) + (i * ci.getWidth())), 175, ci.getWidth(), ci.getHeight());
 			container.addWidget(ffv[i]);			
 			n++;
 		
 			tv[i] = new ColumnView(tableau[i]);
-			tv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), 1000);
+			tv[i].setBounds((20 * (i+1) + (i * ci.getWidth())), 275, ci.getWidth(), 1000);
 			container.addWidget(tv[i]);			
 			n++;
 		
 			sfv[i] = new PileView(sFoundation[i]);
-			sfv[i].setBounds((((n+1) * 5) + (n * ci.getWidth())), 80, ci.getWidth(), ci.getHeight());
+			sfv[i].setBounds((20 * (i+1) + (i * ci.getWidth())), 75, ci.getWidth(), ci.getHeight());
 			container.addWidget(sfv[i]);
 			n++;
 		}
@@ -152,7 +152,6 @@ public class Intrigue extends Solitaire{
 				curTableau++;
 
 			tableau[curTableau].add(curCard);
-			curCard = tableau[curTableau].peek();
 			rank = curCard.getRank();
 
 			if (rank == 6 || rank == 7 || rank == 8 || rank == 9 || rank == 10 || rank == 11) {
@@ -162,7 +161,7 @@ public class Intrigue extends Solitaire{
 						this.updateScore(1);
 						break;
 					} else if (!sFoundation[i].empty()) {
-						int frank = sFoundation[i].get().getRank() + 1;
+						int frank = sFoundation[i].peek().getRank() + 1;
 						if (frank == rank) {
 							sFoundation[i].add(tableau[curTableau].get());
 							this.updateScore(1);
@@ -177,7 +176,7 @@ public class Intrigue extends Solitaire{
 						this.updateScore(1);
 						break;
 					} else if (!fFoundation[i].empty()) {
-						int frank = fFoundation[i].get().getRank() - 1;
+						int frank = fFoundation[i].peek().getRank() - 1;
 						if (frank == rank || (frank == 0 && rank == 13)) {
 							fFoundation[i].add(tableau[curTableau].get());
 							this.updateScore(1);
@@ -187,12 +186,13 @@ public class Intrigue extends Solitaire{
 
 				}
 			}
+//			inum.increment(1);
 		}
 	}
 	
 	@Override
 	public Dimension getPreferredSize() {
-	  return new Dimension (2000, 1080);
+	  return new Dimension (780, 1040);
 	}
 	
 	public static void main(String []args){
