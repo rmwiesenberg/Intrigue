@@ -43,7 +43,9 @@ public class tests extends KSTestCase{
 	Card c1 = new Card(1, 1);
 	
 	public void testTableau5FoundationMove(){
+		game.fFoundation[0].removeAll();
 		Tableau5FoundationMove m = new Tableau5FoundationMove(game.tableau[0], cQ, game.fFoundation[0]);
+		
 		assertEquals(m.valid(game), false);
 		assertEquals(m.doMove(game), false);
 		
@@ -66,24 +68,26 @@ public class tests extends KSTestCase{
 	}
 	
 	public void testTableau6FoundationMove(){
-		Tableau6FoundationMove m = new Tableau6FoundationMove(game.tableau[0], cQ, game.fFoundation[0]);
+		game.sFoundation[0].removeAll();
+		Tableau6FoundationMove m = new Tableau6FoundationMove(game.tableau[0], cQ, game.sFoundation[0]);
+		
 		assertEquals(m.valid(game), false);
 		assertEquals(m.doMove(game), false);
 		
-		m = new Tableau6FoundationMove(game.tableau[0], c6, game.fFoundation[0]);
+		m = new Tableau6FoundationMove(game.tableau[0], c6, game.sFoundation[0]);
 		assertEquals(m.valid(game), true);
 		assertEquals(m.doMove(game), true);
 		
-		m = new Tableau6FoundationMove(game.tableau[0], c7, game.fFoundation[0]);
+		m = new Tableau6FoundationMove(game.tableau[0], c7, game.sFoundation[0]);
 		assertEquals(m.valid(game), true);
 		assertEquals(m.doMove(game), true);
 		assertEquals(m.undo(game), true);
 		
-		m = new Tableau6FoundationMove(game.tableau[0], c6, game.fFoundation[0]);
+		m = new Tableau6FoundationMove(game.tableau[0], c6, game.sFoundation[0]);
 		assertEquals(m.valid(game), false);
 		assertEquals(m.doMove(game), false);
 		
-		m = new Tableau6FoundationMove(game.tableau[0], c5, game.fFoundation[0]);
+		m = new Tableau6FoundationMove(game.tableau[0], c5, game.sFoundation[0]);
 		assertEquals(m.valid(game), false);
 		assertEquals(m.doMove(game), false);
 	}

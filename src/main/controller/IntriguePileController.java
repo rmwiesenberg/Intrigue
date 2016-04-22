@@ -26,23 +26,6 @@ public class IntriguePileController extends java.awt.event.MouseAdapter {
 		this.pileview = pileview;
 	}
 	
-	public void mousePressed(MouseEvent me) {
-		// Ask PileView to retrieve the top card as a CardView Widget
-		CardView cardView = pileview.getCardViewForTopCard(me);
-
-		// no card present!
-		if (cardView == null) { return; }
-		
-		// Have container track this object now. Record where it came from
-		Container c = theGame.getContainer();
-		c.setActiveDraggingObject (cardView, me);
-		c.setDragSource(pileview);
-
-		// we simply redraw our source pile to avoid flicker,
-		// rather than refreshing all widgets...
-		pileview.redraw();
-	}
-	
 	public void mouseReleased(MouseEvent me) {
 		Container c = theGame.getContainer();
 
