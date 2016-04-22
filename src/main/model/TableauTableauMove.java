@@ -15,6 +15,7 @@ public class TableauTableauMove extends Move {
 		this.card = card;
 	}
 	
+	@Override
 	public boolean doMove(Solitaire theGame){
 		if(valid(theGame)){
 			target.add(card);
@@ -22,11 +23,13 @@ public class TableauTableauMove extends Move {
 		} else return false;
 	}
 	
+	@Override
 	public boolean valid(Solitaire theGame){
 		if(card.getRank() == 12 || target.peek().getRank() != 12) return false;
 		else return true;
 	}
 	
+	@Override
 	public boolean undo(Solitaire theGame){
 		if(target.peek().getRank() == 12) return false;
 		else {
